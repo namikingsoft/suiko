@@ -15,9 +15,9 @@ DallasTemperature sensors(&oneWire);
 ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
 
 BlockDuringMillis blockMeasureEC(5000);
-BlockDuringMillis blockObserveEC(10000);
+BlockDuringMillis blockObserveEC(30000);
 
-bool enableECObservation = false;
+bool enableObserveEC = false;
 bool enableInputWater = false;
 
 void setup() {
@@ -36,6 +36,14 @@ void setup() {
   
   mySerial.begin(9600);
   mySerial.println("Conneted");
+}
+
+void printECResult(ECResult* result) {
+  mySerial.print("EC: ");
+  mySerial.print(result->ec25);
+  mySerial.print(" Celsius: ");
+  mySerial.print(result->temperature);
+  mySerial.println(" *C");
 }
 
 void receiveCommandFromBTSerial() {
@@ -57,39 +65,35 @@ void receiveCommandFromBTSerial() {
   } else if (command == 'r') {
     mySerial.println("r -> Revert water: OFF");
     digitalWrite(PIN_REVERT_WATER, LOW);
-  } else if (command == 'R') {
-    mySerial.println("E -> EC observation: ON");
-    enableECObservation = true;
-  } else if (command == 'r') {
-    mySerial.println("e -> EC observation: OFF");
-    enableECObservation = false;
+  } else if (command == 'O') {
+    mySerial.println("O -> Observe EC: ON");
+    enableObserveEC = true;
+  } else if (command == 'o') {
+    mySerial.println("o -> Observe EC: OFF");
+    enableObserveEC = false;
   } else if (command == 'm') {
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) return;
-  
+
     ECResult result = ecMeter.measure();
-    if (result.ec25 != -1) {
-      mySerial.print("m -> EC: ");
-      mySerial.print(result.ec25);
-      mySerial.print(" Celsius: ");
-      mySerial.print(result.temperature);
-      mySerial.println(" *C");
-    }
+    mySerial.print("m -> ");
+    printECResult(&result);
   }
 }
 
 void observeECForInputFertilizer() {
-  if (!enableECObservation) return;
-
   // Wait few seconds prevent breaking sensors
   if (blockObserveEC.isBlock()) return;
   
   ECResult result = ecMeter.measure();
-  if (result.ec25 < 0.7) {
-    mySerial.println("Input fertilizer: ON");
+  mySerial.print("---> ");
+  printECResult(&result);
+
+  if (result.ec25 < 0.7 && digitalRead(PIN_INPUT_FERTILIZER) == LOW) {
+    mySerial.println("---> Input fertilizer: ON");
     digitalWrite(PIN_INPUT_FERTILIZER, HIGH);
-  } else {
-    mySerial.println("Input fertilizer: OFF");
+  } else if (result.ec25 >= 0.7 && digitalRead(PIN_INPUT_FERTILIZER) == HIGH) {
+    mySerial.println("---> Input fertilizer: OFF");
     digitalWrite(PIN_INPUT_FERTILIZER, LOW);
     if (enableInputWater)
       digitalWrite(PIN_INPUT_WATER, HIGH);
@@ -98,5 +102,5 @@ void observeECForInputFertilizer() {
 
 void loop() {
   receiveCommandFromBTSerial();
-  observeECForInputFertilizer();
+  if (enableObserveEC) observeECForInputFertilizer();
 }
