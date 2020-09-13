@@ -7,7 +7,7 @@ BlockDuringMillis::BlockDuringMillis(int duringMillis) {
 }
 
 bool BlockDuringMillis::isBlock() {
-  int msec = millis();
+  unsigned long msec = millis();
   if (msec - this->prevMillis < this->duringMillis) {
     if (msec - this->prevMillis < 0) // For millis overflow
       this->prevMillis = msec;

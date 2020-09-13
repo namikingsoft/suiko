@@ -4,8 +4,8 @@
 class BlockDuringMillis
 {
 private:
-  int duringMillis;
-  int prevMillis;
+  unsigned long duringMillis;
+  unsigned long prevMillis;
   
 public:
   BlockDuringMillis(int duringMillis);
