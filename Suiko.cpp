@@ -79,8 +79,10 @@ void receiveCommandFromBTSerial() {
 }
 
 void observeECForInputFertilizer() {
+  if (!enableECObservation) return;
+
   // Wait few seconds prevent breaking sensors
-  if (!enableECObservation || blockObserveEC.isBlock()) return;
+  if (blockObserveEC.isBlock()) return;
   
   ECResult result = ecMeter.measure();
   if (result.ec25 < 0.7) {
