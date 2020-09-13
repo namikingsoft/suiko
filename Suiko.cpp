@@ -4,15 +4,8 @@
 #include "BlockDuringMillis.h"
 
 #include <SoftwareSerial.h>
-
-// https://github.com/PaulStoffregen/OneWire
 #include <OneWire.h>
-
-// https://github.com/milesburton/Arduino-Temperature-Control-Library
 #include <DallasTemperature.h>
-
-BlockDuringMillis blockMeasureEC(5000);
-BlockDuringMillis blockObserveEC(10000);
 
 SoftwareSerial btSerial(PIN_BLUETOOTH_RXD, PIN_BLUETOOTH_TXD);
 MySerial mySerial(&btSerial);
@@ -20,6 +13,12 @@ MySerial mySerial(&btSerial);
 OneWire oneWire(PIN_ONE_WIRE);
 DallasTemperature sensors(&oneWire);
 ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
+
+BlockDuringMillis blockMeasureEC(5000);
+BlockDuringMillis blockObserveEC(10000);
+
+bool enableECObservation = false;
+bool enableInputWater = false;
 
 void setup() {
   pinMode(PIN_EC_INPUT, INPUT);
@@ -38,9 +37,6 @@ void setup() {
   mySerial.begin(9600);
   mySerial.println("Conneted");
 }
-
-bool enableECObservation = false;
-bool enableInputWater = false;
 
 void receiveCommandFromBTSerial() {
   if (mySerial.available() <= 0) return;
