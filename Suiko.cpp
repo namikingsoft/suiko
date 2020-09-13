@@ -18,20 +18,18 @@ BlockDuringMillis blockMeasureEC(5000);
 BlockDuringMillis blockObserveEC(30000);
 
 bool enableObserveEC = false;
-bool enableInputWater = false;
+bool enableCycleWater = false;
 
 void setup() {
   pinMode(PIN_EC_INPUT, INPUT);
   pinMode(PIN_EC_POWER, OUTPUT); 
   pinMode(PIN_EC_GROUND, OUTPUT); 
-  pinMode(PIN_INPUT_WATER, OUTPUT);
-  pinMode(PIN_REVERT_WATER, OUTPUT);
+  pinMode(PIN_CYCLE_WATER, OUTPUT);
   pinMode(PIN_INPUT_FERTILIZER, OUTPUT);
   
   digitalWrite(PIN_EC_POWER, LOW);
   digitalWrite(PIN_EC_GROUND, LOW);
-  digitalWrite(PIN_INPUT_WATER, LOW); 
-  digitalWrite(PIN_REVERT_WATER, LOW);
+  digitalWrite(PIN_CYCLE_WATER, LOW); 
   digitalWrite(PIN_INPUT_FERTILIZER, LOW);
   
   mySerial.begin(9600);
@@ -50,21 +48,22 @@ void receiveCommandFromBTSerial() {
   if (mySerial.available() <= 0) return;
   char command = mySerial.read();
     
-  if (command == 'I') {
-    mySerial.println("I -> Input water: ON");
-    digitalWrite(PIN_INPUT_WATER, HIGH);
+  if (command == 'C') {
+    mySerial.println("C -> Cycle water: ON");
+    digitalWrite(PIN_CYCLE_WATER, HIGH);
     digitalWrite(PIN_INPUT_FERTILIZER, LOW);
-    enableInputWater = true;
-  } else if (command == 'i') {
-    mySerial.println("i -> Input water: OFF");
-    digitalWrite(PIN_INPUT_WATER, LOW);
-    enableInputWater = false;
-  } else if (command == 'R') {
-    mySerial.println("R -> Revert water: ON");
-    digitalWrite(PIN_REVERT_WATER, HIGH);
-  } else if (command == 'r') {
-    mySerial.println("r -> Revert water: OFF");
-    digitalWrite(PIN_REVERT_WATER, LOW);
+    enableCycleWater = true;
+  } else if (command == 'c') {
+    mySerial.println("c -> Cycle water: OFF");
+    digitalWrite(PIN_CYCLE_WATER, LOW);
+    enableCycleWater = false;
+  } else if (command == 'F') {
+    mySerial.println("F -> Input fertilizer: ON");
+    digitalWrite(PIN_INPUT_FERTILIZER, HIGH);
+    digitalWrite(PIN_CYCLE_WATER, LOW);
+  } else if (command == 'f') {
+    mySerial.println("f -> Input fertilizer: OFF");
+    digitalWrite(PIN_INPUT_FERTILIZER, LOW);
   } else if (command == 'O') {
     mySerial.println("O -> Observe EC: ON");
     enableObserveEC = true;
@@ -89,14 +88,19 @@ void observeECForInputFertilizer() {
   mySerial.print("---> ");
   printECResult(&result);
 
-  if (result.ec25 < 0.7 && digitalRead(PIN_INPUT_FERTILIZER) == LOW) {
+  if (result.ec25 < THRESHOLD_EC_FOR_INPUT_FERTILIZER) {
+    if (digitalRead(PIN_INPUT_FERTILIZER) == HIGH)
+      return;
     mySerial.println("---> Input fertilizer: ON");
     digitalWrite(PIN_INPUT_FERTILIZER, HIGH);
-  } else if (result.ec25 >= 0.7 && digitalRead(PIN_INPUT_FERTILIZER) == HIGH) {
+    digitalWrite(PIN_CYCLE_WATER, LOW);
+  } else {
+    if (digitalRead(PIN_INPUT_FERTILIZER) == LOW)
+      return;
     mySerial.println("---> Input fertilizer: OFF");
     digitalWrite(PIN_INPUT_FERTILIZER, LOW);
-    if (enableInputWater)
-      digitalWrite(PIN_INPUT_WATER, HIGH);
+    if (enableCycleWater)
+      digitalWrite(PIN_CYCLE_WATER, HIGH);
   } 
 }
 
