@@ -25,12 +25,12 @@ void setup() {
   pinMode(PIN_EC_POWER, OUTPUT); 
   pinMode(PIN_EC_GROUND, OUTPUT); 
   pinMode(PIN_CYCLE_WATER, OUTPUT);
-  pinMode(PIN_INPUT_FERTILIZER, OUTPUT);
+  pinMode(PIN_INPUT_WATER, OUTPUT);
   
   digitalWrite(PIN_EC_POWER, LOW);
   digitalWrite(PIN_EC_GROUND, LOW);
   digitalWrite(PIN_CYCLE_WATER, LOW); 
-  digitalWrite(PIN_INPUT_FERTILIZER, LOW);
+  digitalWrite(PIN_INPUT_WATER, LOW);
   
   mySerial.begin(9600);
   mySerial.println("Conneted");
@@ -51,19 +51,19 @@ void receiveCommandFromBTSerial() {
   if (command == 'C') {
     mySerial.println("C -> Cycle water: ON");
     digitalWrite(PIN_CYCLE_WATER, HIGH);
-    digitalWrite(PIN_INPUT_FERTILIZER, LOW);
+    digitalWrite(PIN_INPUT_WATER, LOW);
     enableCycleWater = true;
   } else if (command == 'c') {
     mySerial.println("c -> Cycle water: OFF");
     digitalWrite(PIN_CYCLE_WATER, LOW);
     enableCycleWater = false;
-  } else if (command == 'F') {
-    mySerial.println("F -> Input fertilizer: ON");
-    digitalWrite(PIN_INPUT_FERTILIZER, HIGH);
+  } else if (command == 'I') {
+    mySerial.println("I -> Input water: ON");
+    digitalWrite(PIN_INPUT_WATER, HIGH);
     digitalWrite(PIN_CYCLE_WATER, LOW);
-  } else if (command == 'f') {
-    mySerial.println("f -> Input fertilizer: OFF");
-    digitalWrite(PIN_INPUT_FERTILIZER, LOW);
+  } else if (command == 'i') {
+    mySerial.println("i -> Input water: OFF");
+    digitalWrite(PIN_INPUT_WATER, LOW);
   } else if (command == 'O') {
     mySerial.println("O -> Observe EC: ON");
     enableObserveEC = true;
@@ -89,16 +89,16 @@ void observeECForInputFertilizer() {
   printECResult(&result);
 
   if (result.ec25 < THRESHOLD_EC_FOR_INPUT_FERTILIZER) {
-    if (digitalRead(PIN_INPUT_FERTILIZER) == HIGH)
+    if (digitalRead(PIN_INPUT_WATER) == HIGH)
       return;
-    mySerial.println("---> Input fertilizer: ON");
-    digitalWrite(PIN_INPUT_FERTILIZER, HIGH);
+    mySerial.println("---> Input water: ON");
+    digitalWrite(PIN_INPUT_WATER, HIGH);
     digitalWrite(PIN_CYCLE_WATER, LOW);
   } else {
-    if (digitalRead(PIN_INPUT_FERTILIZER) == LOW)
+    if (digitalRead(PIN_INPUT_WATER) == LOW)
       return;
-    mySerial.println("---> Input fertilizer: OFF");
-    digitalWrite(PIN_INPUT_FERTILIZER, LOW);
+    mySerial.println("---> Input water: OFF");
+    digitalWrite(PIN_INPUT_WATER, LOW);
     if (enableCycleWater)
       digitalWrite(PIN_CYCLE_WATER, HIGH);
   } 
