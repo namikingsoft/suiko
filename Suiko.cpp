@@ -17,7 +17,7 @@ ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
 BlockDuringMillis blockMeasureEC(5000);
 BlockDuringMillis blockObserveEC(30000);
 
-bool enableObserveEC = false;
+ObserveMode observeMode = OFF; 
 bool enableCycleWater = false;
 
 void setup() {
@@ -64,12 +64,15 @@ void receiveCommandFromBTSerial() {
   } else if (command == 'i') {
     mySerial.println("i -> Input water: OFF");
     digitalWrite(PIN_INPUT_WATER, LOW);
-  } else if (command == 'O') {
-    mySerial.println("O -> Observe EC: ON");
-    enableObserveEC = true;
-  } else if (command == 'o') {
-    mySerial.println("o -> Observe EC: OFF");
-    enableObserveEC = false;
+  } else if (command == 'a') {
+    mySerial.println("a -> Observe mode: OFF");
+    observeMode = OFF;
+  } else if (command == 's') {
+    mySerial.println("s -> Observe mode: INPUT WATER");
+    observeMode = INPUT_WATER;
+  } else if (command == 'd') {
+    mySerial.println("d -> Observe mode: INPUT FERTILIZER");
+    observeMode = INPUT_FERTILIZER;
   } else if (command == 'm') {
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) return;
@@ -88,7 +91,10 @@ void observeECForInputFertilizer() {
   mySerial.print("---> ");
   printECResult(&result);
 
-  if (result.ec25 < THRESHOLD_EC_FOR_INPUT_FERTILIZER) {
+  if (
+    (observeMode == INPUT_WATER && result.ec25 > THRESHOLD_EC_FOR_INPUT_WATER) ||
+    (observeMode == INPUT_FERTILIZER && result.ec25 < THRESHOLD_EC_FOR_INPUT_FERTILIZER)
+  ) {
     if (digitalRead(PIN_INPUT_WATER) == HIGH)
       return;
     mySerial.println("---> Input water: ON");
@@ -106,5 +112,5 @@ void observeECForInputFertilizer() {
 
 void loop() {
   receiveCommandFromBTSerial();
-  if (enableObserveEC) observeECForInputFertilizer();
+  if (observeMode != OFF) observeECForInputFertilizer();
 }
