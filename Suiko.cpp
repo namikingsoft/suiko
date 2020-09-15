@@ -1,6 +1,7 @@
 #include "Suiko.h"
 #include "ECMeter.h"
 #include "MySerial.h"
+#include "Commander.h"
 #include "BlockDuringMillis.h"
 
 #include <SoftwareSerial.h>
@@ -17,6 +18,7 @@ ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
 BlockDuringMillis blockMeasureEC(5000);
 BlockDuringMillis blockObserveEC(30000);
 
+Commander commander;
 ObserveMode observeMode = OFF; 
 bool enableCycleWater = false;
 
@@ -46,39 +48,42 @@ void printECResult(ECResult* result) {
 
 void receiveCommandFromBTSerial() {
   if (mySerial.available() <= 0) return;
-  char command = mySerial.read();
-    
-  if (command == 'C') {
-    mySerial.println("C -> Cycle water: ON");
-    digitalWrite(PIN_CYCLE_WATER, HIGH);
-    digitalWrite(PIN_INPUT_WATER, LOW);
-    enableCycleWater = true;
-  } else if (command == 'c') {
-    mySerial.println("c -> Cycle water: OFF");
-    digitalWrite(PIN_CYCLE_WATER, LOW);
-    enableCycleWater = false;
-  } else if (command == 'I') {
-    mySerial.println("I -> Input water: ON");
-    digitalWrite(PIN_INPUT_WATER, HIGH);
-    digitalWrite(PIN_CYCLE_WATER, LOW);
-  } else if (command == 'i') {
-    mySerial.println("i -> Input water: OFF");
-    digitalWrite(PIN_INPUT_WATER, LOW);
-  } else if (command == 'a') {
-    mySerial.println("a -> Observe mode: OFF");
+  char ch = mySerial.read();
+  mySerial.write(ch); // echo mode
+  
+  Command cmd = commander.receive(ch);
+  switch (cmd.type) {
+  case COMMAND_CYCLE_WATER:
+    mySerial.print(" -> Cycle water ");
+    mySerial.println(cmd.payload.is ? "ON" : "OFF");
+    digitalWrite(PIN_CYCLE_WATER, cmd.payload.is ? HIGH : LOW);
+    if (cmd.payload.is) digitalWrite(PIN_INPUT_WATER, LOW);
+    enableCycleWater = cmd.payload.is;
+    break;
+  case COMMAND_INPUT_WATER:
+    mySerial.print(" -> Input water ");
+    mySerial.println(cmd.payload.is ? "ON" : "OFF");
+    digitalWrite(PIN_INPUT_WATER, cmd.payload.is ? HIGH : LOW);
+    if (cmd.payload.is) digitalWrite(PIN_CYCLE_WATER, LOW);
+    break;
+  case COMMAND_OBSERVE_MODE_OFF:
+    mySerial.println(" -> Observe mode: OFF");
     observeMode = OFF;
-  } else if (command == 's') {
-    mySerial.println("s -> Observe mode: INPUT WATER");
+    break;
+  case COMMAND_OBSERVE_MODE_ABOVE:
+    mySerial.println(" -> Observe mode: INPUT WATER");
     observeMode = INPUT_WATER;
-  } else if (command == 'd') {
-    mySerial.println("d -> Observe mode: INPUT FERTILIZER");
+    break;
+  case COMMAND_OBSERVE_MODE_BELOW:
+    mySerial.println(" -> Observe mode: INPUT FERTILIZER");
     observeMode = INPUT_FERTILIZER;
-  } else if (command == 'm') {
+    break;
+  case COMMAND_MEASURE_EC:
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) return;
 
     ECResult result = ecMeter.measure();
-    mySerial.print("m -> ");
+    mySerial.print(" -> ");
     printECResult(&result);
   }
 }

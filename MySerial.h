@@ -13,6 +13,7 @@ public:
   void print(char* str);
   void print(float num);
   void println(char* str);
+  void write(char ch);
   char read();
   int available();
 };

@@ -15,7 +15,7 @@
 #define THRESHOLD_EC_FOR_INPUT_WATER 1.0
 #define THRESHOLD_EC_FOR_INPUT_FERTILIZER 0.8
 
-enum ObserveMode { OFF , INPUT_WATER , INPUT_FERTILIZER };
+enum ObserveMode { OFF, INPUT_WATER, INPUT_FERTILIZER };
 
 void setup();
 void loop();

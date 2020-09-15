@@ -25,6 +25,11 @@ void MySerial::println(char* str) {
   this->serial->println(str);
 }
 
+void MySerial::write(char ch) {
+  Serial.write(ch);
+  this->serial->write(ch);
+}
+
 char MySerial::read() {
   return Serial.available() > 0 ? Serial.read() : this->serial->read();
 }
