@@ -1,14 +1,17 @@
 #ifndef __Commander_h__
 #define __Commander_h__
 
+#include "Arduino.h"
+
 enum CommandType {
-  COMMAND_NOOP,
+  COMMAND_BUFFER,
+  COMMAND_NOT_FOUND,
   COMMAND_CYCLE_WATER,
   COMMAND_INPUT_WATER,
+  COMMAND_MEASURE_EC,
   COMMAND_OBSERVE_MODE_OFF,
   COMMAND_OBSERVE_MODE_ABOVE,
   COMMAND_OBSERVE_MODE_BELOW,
-  COMMAND_MEASURE_EC
 };
 
 union CommandPayload {
@@ -23,8 +26,9 @@ struct Command {
 
 class Commander {
 private:
-  char firstLetter = '\0';
-  char payloadBuf[3];
+  CommandType bufferType = COMMAND_NOT_FOUND;
+  String bufferPayload = String(4);
+  void clearBuffer();  
   
 public:
   Command receive(char  ch);

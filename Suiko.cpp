@@ -19,7 +19,7 @@ BlockDuringMillis blockMeasureEC(5000);
 BlockDuringMillis blockObserveEC(30000);
 
 Commander commander;
-ObserveMode observeMode = OFF; 
+Command observeCommand = { COMMAND_OBSERVE_MODE_OFF, { false } }; 
 bool enableCycleWater = false;
 
 void setup() {
@@ -49,46 +49,42 @@ void printECResult(ECResult* result) {
 void receiveCommandFromBTSerial() {
   if (mySerial.available() <= 0) return;
   char ch = mySerial.read();
-  mySerial.write(ch); // echo mode
-  
+
   Command cmd = commander.receive(ch);
-  switch (cmd.type) {
-  case COMMAND_CYCLE_WATER:
+  if (cmd.type != COMMAND_NOT_FOUND) {
+    mySerial.write(ch); // echo mode
+  }
+  
+  if (cmd.type == COMMAND_CYCLE_WATER) {
     mySerial.print(" -> Cycle water ");
     mySerial.println(cmd.payload.is ? "ON" : "OFF");
     digitalWrite(PIN_CYCLE_WATER, cmd.payload.is ? HIGH : LOW);
     if (cmd.payload.is) digitalWrite(PIN_INPUT_WATER, LOW);
     enableCycleWater = cmd.payload.is;
-    break;
-  case COMMAND_INPUT_WATER:
+  } else if (cmd.type == COMMAND_INPUT_WATER) {
     mySerial.print(" -> Input water ");
     mySerial.println(cmd.payload.is ? "ON" : "OFF");
     digitalWrite(PIN_INPUT_WATER, cmd.payload.is ? HIGH : LOW);
     if (cmd.payload.is) digitalWrite(PIN_CYCLE_WATER, LOW);
-    break;
-  case COMMAND_OBSERVE_MODE_OFF:
-    mySerial.println(" -> Observe mode: OFF");
-    observeMode = OFF;
-    break;
-  case COMMAND_OBSERVE_MODE_ABOVE:
-    mySerial.println(" -> Observe mode: INPUT WATER");
-    observeMode = INPUT_WATER;
-    break;
-  case COMMAND_OBSERVE_MODE_BELOW:
-    mySerial.println(" -> Observe mode: INPUT FERTILIZER");
-    observeMode = INPUT_FERTILIZER;
-    break;
-  case COMMAND_MEASURE_EC:
+  } else if (cmd.type == COMMAND_MEASURE_EC) {
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) return;
-
     ECResult result = ecMeter.measure();
     mySerial.print(" -> ");
     printECResult(&result);
+  } else if (cmd.type == COMMAND_OBSERVE_MODE_OFF) {
+    mySerial.println(" -> Observe mode: OFF");
+    observeCommand = cmd;
+  } else if (cmd.type == COMMAND_OBSERVE_MODE_ABOVE || cmd.type == COMMAND_OBSERVE_MODE_BELOW) {
+    mySerial.print(" -> Observe mode: IF EC");
+    mySerial.print(cmd.type == COMMAND_OBSERVE_MODE_ABOVE ? ">" : "<");
+    mySerial.print(cmd.payload.ec);
+    mySerial.println(" THEN INPUT WATER");
+    observeCommand = cmd;
   }
 }
 
-void observeECForInputFertilizer() {
+void observeForInputWater() {
   // Wait few seconds prevent breaking sensors
   if (blockObserveEC.isBlock()) return;
   
@@ -97,8 +93,8 @@ void observeECForInputFertilizer() {
   printECResult(&result);
 
   if (
-    (observeMode == INPUT_WATER && result.ec25 > THRESHOLD_EC_FOR_INPUT_WATER) ||
-    (observeMode == INPUT_FERTILIZER && result.ec25 < THRESHOLD_EC_FOR_INPUT_FERTILIZER)
+    (observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE && result.ec25 > observeCommand.payload.ec) ||
+    (observeCommand.type == COMMAND_OBSERVE_MODE_BELOW && result.ec25 < observeCommand.payload.ec)
   ) {
     if (digitalRead(PIN_INPUT_WATER) == HIGH)
       return;
@@ -117,5 +113,8 @@ void observeECForInputFertilizer() {
 
 void loop() {
   receiveCommandFromBTSerial();
-  if (observeMode != OFF) observeECForInputFertilizer();
+  if (
+    observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE ||
+    observeCommand.type == COMMAND_OBSERVE_MODE_BELOW
+  ) observeForInputWater();
 }
