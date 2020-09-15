@@ -5,27 +5,27 @@ MySerial::MySerial(SoftwareSerial* serial) {
   this->serial = serial;
 }
 
-void MySerial::begin(int bps) {
+void MySerial::begin(int const bps) {
   Serial.begin(bps);
   this->serial->begin(bps);
 }
 
-void MySerial::print(char* str) {
+void MySerial::print(char* const str) {
   Serial.print(str);
   this->serial->print(str);
 }
 
-void MySerial::print(float num) {
+void MySerial::print(float const num) {
   Serial.print(num);
   this->serial->print(num);
 }
 
-void MySerial::println(char* str) {
+void MySerial::println(char* const str) {
   Serial.println(str);
   this->serial->println(str);
 }
 
-void MySerial::write(char ch) {
+void MySerial::write(char const ch) {
   Serial.write(ch);
   this->serial->write(ch);
 }

@@ -1,13 +1,13 @@
 #include "BlockDuringMillis.h"
 #include "Arduino.h"
 
-BlockDuringMillis::BlockDuringMillis(int duringMillis) {
+BlockDuringMillis::BlockDuringMillis(int const duringMillis) {
   this->duringMillis = duringMillis;
   this->prevMillis = - duringMillis;
 }
 
 bool BlockDuringMillis::isBlock() {
-  unsigned long msec = millis();
+  const unsigned long msec = millis();
   if (msec - this->prevMillis < this->duringMillis) {
     if (msec - this->prevMillis < 0) // For millis overflow
       this->prevMillis = msec;
@@ -17,6 +17,6 @@ bool BlockDuringMillis::isBlock() {
   return false;
 }
 
-void BlockDuringMillis::setDuringMillis(int duringMillis) {
+void BlockDuringMillis::setDuringMillis(int const duringMillis) {
   this->duringMillis = duringMillis;
 }

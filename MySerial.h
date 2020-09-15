@@ -9,11 +9,11 @@ private:
   
 public:
   MySerial(SoftwareSerial* serial);
-  void begin(int bps);
-  void print(char* str);
-  void print(float num);
-  void println(char* str);
-  void write(char ch);
+  void begin(int const bps);
+  void print(char* const str);
+  void print(float const num);
+  void println(char* const str);
+  void write(char const ch);
   char read();
   int available();
 };

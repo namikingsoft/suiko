@@ -1,6 +1,6 @@
 #include "Commander.h"
 
-Command Commander::receive(char ch) {
+Command Commander::receive(char const ch) {
   CommandType type = COMMAND_NOT_FOUND;
   CommandPayload payload = { false };
   if (ch == 'C') {

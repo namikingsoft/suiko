@@ -15,7 +15,7 @@ private:
   int pinPower;
   
 public:
-  ECMeter(DallasTemperature* sensors, int pinInput, int pinPower);
+  ECMeter(DallasTemperature* const sensors, int const pinInput, int const pinPower);
   ECResult ECMeter::measure();
 };
 

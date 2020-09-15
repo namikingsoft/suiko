@@ -7,7 +7,7 @@
 #define TEMPERATURE_COEF 0.019
 #define EC_CELL_CONSTANT 2.80
 
-ECMeter::ECMeter(DallasTemperature* sensors, int pinInput, int pinPower) {
+ECMeter::ECMeter(DallasTemperature* const sensors, int const pinInput, int const pinPower) {
   this->sensors = sensors;
   this->pinInput = pinInput;
   this->pinPower = pinPower;

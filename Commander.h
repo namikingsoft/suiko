@@ -31,7 +31,7 @@ private:
   void clearBuffer();  
   
 public:
-  Command receive(char  ch);
+  Command receive(char const ch);
 };
 
 #endif /* __Commander_h__ */

@@ -38,7 +38,7 @@ void setup() {
   mySerial.println("Conneted");
 }
 
-void printECResult(ECResult* result) {
+void printECResult(ECResult* const result) {
   mySerial.print("EC: ");
   mySerial.print(result->ec25);
   mySerial.print(" Celsius: ");
@@ -48,9 +48,9 @@ void printECResult(ECResult* result) {
 
 void receiveCommandFromBTSerial() {
   if (mySerial.available() <= 0) return;
-  char ch = mySerial.read();
+  char const ch = mySerial.read();
 
-  Command cmd = commander.receive(ch);
+  Command const cmd = commander.receive(ch);
   if (cmd.type != COMMAND_NOT_FOUND) {
     mySerial.write(ch); // echo mode
   }
@@ -69,7 +69,7 @@ void receiveCommandFromBTSerial() {
   } else if (cmd.type == COMMAND_MEASURE_EC) {
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) return;
-    ECResult result = ecMeter.measure();
+    ECResult const result = ecMeter.measure();
     mySerial.print(" -> ");
     printECResult(&result);
   } else if (cmd.type == COMMAND_OBSERVE_MODE_OFF) {
@@ -91,7 +91,7 @@ void observeForInputWater() {
   // set to default
   blockObserveEC.setDuringMillis(BLOCK_OBSERVE_EC_DURING_MILLIS);
   
-  ECResult result = ecMeter.measure();
+  ECResult const result = ecMeter.measure();
   mySerial.print("---> ");
   printECResult(&result);
 
