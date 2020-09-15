@@ -28,7 +28,7 @@ void setup() {
   pinMode(PIN_EC_GROUND, OUTPUT); 
   pinMode(PIN_CYCLE_WATER, OUTPUT);
   pinMode(PIN_INPUT_WATER, OUTPUT);
-  
+
   digitalWrite(PIN_EC_POWER, LOW);
   digitalWrite(PIN_EC_GROUND, LOW);
   digitalWrite(PIN_CYCLE_WATER, LOW); 
