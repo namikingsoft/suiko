@@ -10,6 +10,7 @@ private:
 public:
   BlockDuringMillis(int duringMillis);
   bool isBlock();
+  void setDuringMillis(int duringMillis);
 };
 
 #endif /* __BlockDuringMillis_h__ */

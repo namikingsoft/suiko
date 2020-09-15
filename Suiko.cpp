@@ -15,8 +15,8 @@ OneWire oneWire(PIN_ONE_WIRE);
 DallasTemperature sensors(&oneWire);
 ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
 
-BlockDuringMillis blockMeasureEC(5000);
-BlockDuringMillis blockObserveEC(30000);
+BlockDuringMillis blockMeasureEC(BLOCK_MEASURE_EC_DURING_MILLIS);
+BlockDuringMillis blockObserveEC(BLOCK_OBSERVE_EC_DURING_MILLIS);
 
 Commander commander;
 Command observeCommand = { COMMAND_OBSERVE_MODE_OFF, { false } }; 
@@ -87,6 +87,9 @@ void receiveCommandFromBTSerial() {
 void observeForInputWater() {
   // Wait few seconds prevent breaking sensors
   if (blockObserveEC.isBlock()) return;
+
+  // set to default
+  blockObserveEC.setDuringMillis(BLOCK_OBSERVE_EC_DURING_MILLIS);
   
   ECResult result = ecMeter.measure();
   mySerial.print("---> ");
@@ -96,6 +99,9 @@ void observeForInputWater() {
     (observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE && result.ec25 > observeCommand.payload.ec) ||
     (observeCommand.type == COMMAND_OBSERVE_MODE_BELOW && result.ec25 < observeCommand.payload.ec)
   ) {
+    // speed up observation
+    blockObserveEC.setDuringMillis(BLOCK_MEASURE_EC_DURING_MILLIS);
+    
     if (digitalRead(PIN_INPUT_WATER) == HIGH)
       return;
     mySerial.println("---> Input water: ON");

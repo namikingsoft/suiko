@@ -12,6 +12,9 @@
 #define PIN_BLUETOOTH_TXD 11
 #define PIN_ONE_WIRE 12
 
+#define BLOCK_MEASURE_EC_DURING_MILLIS 5000
+#define BLOCK_OBSERVE_EC_DURING_MILLIS 30000
+
 void setup();
 void loop();
 

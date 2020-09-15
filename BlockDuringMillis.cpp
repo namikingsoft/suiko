@@ -16,3 +16,7 @@ bool BlockDuringMillis::isBlock() {
   this->prevMillis = msec;
   return false;
 }
+
+void BlockDuringMillis::setDuringMillis(int duringMillis) {
+  this->duringMillis = duringMillis;
+}
