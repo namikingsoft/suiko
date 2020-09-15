@@ -34,7 +34,7 @@ void setup() {
   digitalWrite(PIN_CYCLE_WATER, LOW); 
   digitalWrite(PIN_INPUT_WATER, LOW);
   
-  mySerial.begin(9600);
+  mySerial.begin(SERIAL_BPS);
   mySerial.println("Conneted");
 }
 
