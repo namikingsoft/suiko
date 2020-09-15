@@ -1,6 +1,6 @@
 Suiko
 ==================
-This is prototype of Hydroponics system for aeration and liquid fertilizer adjustment.
+This is prototype of Hydroponics system for aeration and liquid fertilizer adjustment via Bluetooth.
 
 Circuit Diagram
 ------------------
@@ -10,7 +10,8 @@ https://www.tinkercad.com/things/fpSljIVI2Si
 
 Serial Commands
 ------------------
-Newline code: NONE
+- Serial bps: 9600
+- Newline code: NONE
 
 | Command | Description |
 | --- | --- |
