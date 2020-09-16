@@ -1,6 +1,6 @@
 #include "Suiko.h"
 #include "ECMeter.h"
-#include "MySerial.h"
+#include "DualSerial.h"
 #include "Commander.h"
 #include "BlockDuringMillis.h"
 
@@ -8,8 +8,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-SoftwareSerial btSerial(PIN_BLUETOOTH_RXD, PIN_BLUETOOTH_TXD);
-MySerial mySerial(&btSerial);
+SoftwareSerial swSerial(PIN_BLUETOOTH_RXD, PIN_BLUETOOTH_TXD);
+DualSerial mySerial(&swSerial);
 
 OneWire oneWire(PIN_ONE_WIRE);
 DallasTemperature sensors(&oneWire);

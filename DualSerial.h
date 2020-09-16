@@ -1,14 +1,14 @@
-#ifndef __MySerial_h__
-#define __MySerial_h__
+#ifndef __DualSerial_h__
+#define __DualSerial_h__
 
 #include <SoftwareSerial.h>
 
-class MySerial {
+class DualSerial {
 private:
   SoftwareSerial* serial;
   
 public:
-  MySerial(SoftwareSerial* serial);
+  DualSerial(SoftwareSerial* serial);
   void begin(int const bps);
   void print(char* const str);
   void print(float const num);
@@ -18,4 +18,4 @@ public:
   int available();
 };
 
-#endif /* __MySerial_h__ */
+#endif /* __DualSerial_h__ */
