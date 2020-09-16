@@ -8,10 +8,11 @@ https://www.tinkercad.com/things/fpSljIVI2Si
 
 ![Suiko](https://user-images.githubusercontent.com/3187220/93266167-a620e800-f7e4-11ea-939b-ee56c9987325.png)
 
-Serial Commands
+Serial Commands via USB or Bluetooth
 ------------------
-- Serial bps: 9600
+- Software Serial: D10->RxD, D11->TxD
 - Newline code: NONE
+- BPS: 9600
 
 | Command | Description |
 | --- | --- |
