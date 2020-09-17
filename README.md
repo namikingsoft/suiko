@@ -30,7 +30,7 @@ Serial Commands via USB or Bluetooth
 | &lt;n.nn | Observe Mode: If EC &lt; n.nn (e.g. 0.80) Then Input pump ON |
 
 
-Reference about EC
+References about EC
 ------------------------------------
 - https://hackaday.io/project/7008-fly-wars-a-hackers-solution-to-world-hunger/log/24646-three-dollar-ec-ppm-meter-arduino
 - https://nadegata.info/ec-automation-how-to-make/
