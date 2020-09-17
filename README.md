@@ -2,12 +2,14 @@ Suiko
 ====================================
 This is prototype of Hydroponics system for aeration and liquid fertilizer adjustment via Bluetooth.
 
+![Suiko](https://user-images.githubusercontent.com/3187220/93475749-f6f32680-f933-11ea-9229-4175fcb4df4b.jpeg)
+
 
 Circuit Diagram
 ------------------------------------
 https://www.tinkercad.com/things/fpSljIVI2Si
 
-![Suiko](https://user-images.githubusercontent.com/3187220/93266167-a620e800-f7e4-11ea-939b-ee56c9987325.png)
+![Circuit](https://user-images.githubusercontent.com/3187220/93266167-a620e800-f7e4-11ea-939b-ee56c9987325.png)
 
 
 Serial Commands via USB or Bluetooth
