@@ -35,3 +35,9 @@ References about EC
 - https://hackaday.io/project/7008-fly-wars-a-hackers-solution-to-world-hunger/log/24646-three-dollar-ec-ppm-meter-arduino
 - https://nadegata.info/ec-automation-how-to-make/
 - https://jitaku-yasai.com/home-made/ec-meter-selfmade/
+
+
+Licence
+------------------------------------
+- GNU General Public License v3
+    - From [refs](https://hackaday.io/project/7008-fly-wars-a-hackers-solution-to-world-hunger/log/24646-three-dollar-ec-ppm-meter-arduino)
