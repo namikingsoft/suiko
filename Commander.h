@@ -14,6 +14,15 @@ enum CommandType {
   COMMAND_OBSERVE_MODE_BELOW,
 };
 
+#define CHAR_CYCLE_WATER_ON 'C'
+#define CHAR_CYCLE_WATER_OFF 'c'
+#define CHAR_INPUT_WATER_ON 'I'
+#define CHAR_INPUT_WATER_OFF 'i'
+#define CHAR_MEASURE_EC 'm'
+#define CHAR_OBSERVE_MODE_OFF 'o'
+#define CHAR_OBSERVE_MODE_ABOVE '>'
+#define CHAR_OBSERVE_MODE_BELOW '<'
+
 union CommandPayload {
   bool is;
   float ec;
