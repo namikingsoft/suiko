@@ -8,6 +8,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#define MSG_RETRY_AFTER_SECONDS" -> Retry after seconds"
+
 SoftwareSerial swSerial(PIN_BLUETOOTH_RXD, PIN_BLUETOOTH_TXD);
 DualSerial mySerial(&swSerial);
 
@@ -68,14 +70,26 @@ void receiveCommandFromBTSerial() {
     if (cmd.payload.is) digitalWrite(PIN_CYCLE_WATER, LOW);
   } else if (cmd.type == COMMAND_MEASURE_EC) {
     // Wait few seconds prevent breaking sensors
-    if (blockMeasureEC.isBlock()) return;
+    if (blockMeasureEC.isBlock()) {
+      mySerial.println(MSG_RETRY_AFTER_SECONDS);
+      return;
+    } else if (observeCommand.type != COMMAND_OBSERVE_MODE_OFF) {
+      mySerial.println(" -> Turn off observe mode");
+      return;
+    }
     ECResult const result = ecMeter.measure();
     mySerial.print(" -> ");
     printECResult(&result);
   } else if (cmd.type == COMMAND_OBSERVE_MODE_OFF) {
     mySerial.println(" -> Observe mode: OFF");
     observeCommand = cmd;
+    blockMeasureEC.resetPrevMillis();
   } else if (cmd.type == COMMAND_OBSERVE_MODE_ABOVE || cmd.type == COMMAND_OBSERVE_MODE_BELOW) {
+    // Wait few seconds prevent breaking sensors
+    if (blockMeasureEC.isBlock()) {
+      mySerial.println(MSG_RETRY_AFTER_SECONDS);
+      return;
+    }
     mySerial.print(" -> Observe mode: IF EC");
     mySerial.print(cmd.type == COMMAND_OBSERVE_MODE_ABOVE ? ">" : "<");
     mySerial.print(cmd.payload.ec);

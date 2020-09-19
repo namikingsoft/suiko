@@ -20,3 +20,7 @@ bool BlockDuringMillis::isBlock() {
 void BlockDuringMillis::setDuringMillis(int const duringMillis) {
   this->duringMillis = duringMillis;
 }
+
+void BlockDuringMillis::resetPrevMillis() {
+   this->prevMillis = millis();
+}

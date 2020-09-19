@@ -11,6 +11,7 @@ public:
   BlockDuringMillis(int const duringMillis);
   bool isBlock();
   void setDuringMillis(int const duringMillis);
+  void resetPrevMillis();
 };
 
 #endif /* __BlockDuringMillis_h__ */
