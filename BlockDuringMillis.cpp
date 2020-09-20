@@ -1,9 +1,9 @@
 #include "BlockDuringMillis.h"
 #include "Arduino.h"
 
-BlockDuringMillis::BlockDuringMillis(int const duringMillis) {
+BlockDuringMillis::BlockDuringMillis(unsigned long const duringMillis) {
   this->duringMillis = duringMillis;
-  this->prevMillis = - duringMillis;
+  this->prevMillis = 0;
 }
 
 bool BlockDuringMillis::isBlock() {
@@ -17,7 +17,7 @@ bool BlockDuringMillis::isBlock() {
   return false;
 }
 
-void BlockDuringMillis::setDuringMillis(int const duringMillis) {
+void BlockDuringMillis::setDuringMillis(unsigned long const duringMillis) {
   this->duringMillis = duringMillis;
 }
 

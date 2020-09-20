@@ -8,9 +8,9 @@ private:
   unsigned long prevMillis;
   
 public:
-  BlockDuringMillis(int const duringMillis);
+  BlockDuringMillis(unsigned long const duringMillis);
   bool isBlock();
-  void setDuringMillis(int const duringMillis);
+  void setDuringMillis(unsigned long const duringMillis);
   void resetPrevMillis();
 };
 
