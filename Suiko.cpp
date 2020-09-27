@@ -1,5 +1,6 @@
 #include "Suiko.h"
 #include "ECMeter.h"
+#include "PHMeter.h"
 #include "DualSerial.h"
 #include "Commander.h"
 #include "BlockDuringMillis.h"
@@ -16,6 +17,7 @@ DualSerial mySerial(&swSerial);
 OneWire oneWire(PIN_ONE_WIRE);
 DallasTemperature sensors(&oneWire);
 ECMeter ecMeter(&sensors, PIN_EC_INPUT, PIN_EC_POWER);
+PHMeter phMeter(PIN_PH_INPUT);
 
 BlockDuringMillis blockMeasureEC(BLOCK_MEASURE_EC_DURING_MILLIS);
 BlockDuringMillis blockObserveEC(BLOCK_OBSERVE_EC_DURING_MILLIS);
@@ -33,19 +35,20 @@ void setup() {
 
   digitalWrite(PIN_EC_POWER, LOW);
   digitalWrite(PIN_EC_GROUND, LOW);
-  digitalWrite(PIN_CYCLE_WATER, LOW); 
+  digitalWrite(PIN_CYCLE_WATER, LOW);
   digitalWrite(PIN_INPUT_WATER, LOW);
   
   mySerial.begin(SERIAL_BPS);
   mySerial.println("Conneted");
 }
 
-void printECResult(ECResult* const result) {
-  mySerial.print("EC: ");
+void printMeasureResult(ECResult* const result, float const ph) {
   mySerial.print(result->ec25);
-  mySerial.print(" Celsius: ");
+  mySerial.print("EC ");
+  mySerial.print(ph);
+  mySerial.print("pH ");
   mySerial.print(result->temperature);
-  mySerial.println(" *C");
+  mySerial.println("*C");
 }
 
 void receiveCommandFromBTSerial() {
@@ -78,8 +81,9 @@ void receiveCommandFromBTSerial() {
       return;
     }
     ECResult const result = ecMeter.measure();
+    float const ph = phMeter.measure();
     mySerial.print(" -> ");
-    printECResult(&result);
+    printMeasureResult(&result, ph);
   } else if (cmd.type == COMMAND_OBSERVE_MODE_OFF) {
     mySerial.println(" -> Observe mode: OFF");
     observeCommand = cmd;
@@ -106,8 +110,9 @@ void observeForInputWater() {
   blockObserveEC.setDuringMillis(BLOCK_OBSERVE_EC_DURING_MILLIS);
   
   ECResult const result = ecMeter.measure();
+  float const ph = phMeter.measure();
   mySerial.print("---> ");
-  printECResult(&result);
+  printMeasureResult(&result, ph);
 
   if (
     (observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE && result.ec25 > observeCommand.payload.ec) ||
