@@ -32,11 +32,13 @@ void setup() {
   pinMode(PIN_EC_GROUND, OUTPUT); 
   pinMode(PIN_CYCLE_WATER, OUTPUT);
   pinMode(PIN_INPUT_WATER, OUTPUT);
+  pinMode(PIN_AIR_PUMP_PWM, OUTPUT);
 
   digitalWrite(PIN_EC_POWER, LOW);
   digitalWrite(PIN_EC_GROUND, LOW);
   digitalWrite(PIN_CYCLE_WATER, LOW);
   digitalWrite(PIN_INPUT_WATER, LOW);
+  analogWrite(PIN_AIR_PUMP_PWM, 0);
   
   mySerial.begin(SERIAL_BPS);
   mySerial.println("Conneted");
@@ -71,6 +73,10 @@ void receiveCommandFromBTSerial() {
     mySerial.println(cmd.payload.is ? "ON" : "OFF");
     digitalWrite(PIN_INPUT_WATER, cmd.payload.is ? HIGH : LOW);
     if (cmd.payload.is) digitalWrite(PIN_CYCLE_WATER, LOW);
+  } else if (cmd.type == COMMAND_AIR_PUMP) {
+    mySerial.print(" -> Air pump ");
+    mySerial.println(cmd.payload.is ? "ON" : "OFF");
+    analogWrite(PIN_AIR_PUMP_PWM, cmd.payload.is ? AIR_PUMP_PWM_POWER : 0);
   } else if (cmd.type == COMMAND_MEASURE_EC) {
     // Wait few seconds prevent breaking sensors
     if (blockMeasureEC.isBlock()) {

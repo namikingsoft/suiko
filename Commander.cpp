@@ -13,6 +13,11 @@ Command Commander::receive(char const ch) {
     payload.is = true;
   } else if (ch == CHAR_INPUT_WATER_OFF) {
     type = COMMAND_INPUT_WATER;
+  } else if (ch == CHAR_AIR_PUMP_ON) {
+    type = COMMAND_AIR_PUMP;
+    payload.is = true;
+  } else if (ch == CHAR_AIR_PUMP_OFF) {
+    type = COMMAND_AIR_PUMP;
   } else if (ch == CHAR_MEASURE_EC) {
     type = COMMAND_MEASURE_EC;
   } else if (ch == CHAR_OBSERVE_MODE_OFF) {
