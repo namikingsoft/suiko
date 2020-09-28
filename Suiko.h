@@ -6,7 +6,7 @@
 #define SERIAL_BPS 9600
 #define PIN_EC_INPUT A0
 #define PIN_EC_POWER A4
-#define PIN_PH_INPUT A5
+#define PIN_PH_INPUT A7
 #define PIN_EC_GROUND A1
 #define PIN_CYCLE_WATER 2
 #define PIN_INPUT_WATER 3

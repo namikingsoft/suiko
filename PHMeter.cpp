@@ -30,6 +30,6 @@ float PHMeter::measure() {
   unsigned long int avgValue = 0;
   for (int i=2; i<BUFFUR_LENGTH-2; i++) avgValue += buf[i];
   
-  float vol = (float)avgValue * 5.0 / 1024 / 6;
+  float vol = (float)avgValue * 5.0 / 1024 / (BUFFER_LENGTH-4);
   return V2PH_SLOPE * vol + V2PH_INTERCEPT;
 }
