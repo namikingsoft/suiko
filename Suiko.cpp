@@ -28,6 +28,7 @@ bool enableCycleWater = false;
 
 void setup() {
   pinMode(PIN_EC_INPUT, INPUT);
+  pinMode(PIN_PH_INPUT, INPUT);
   pinMode(PIN_EC_POWER, OUTPUT); 
   pinMode(PIN_EC_GROUND, OUTPUT); 
   pinMode(PIN_CYCLE_WATER, OUTPUT);
