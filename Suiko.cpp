@@ -76,6 +76,8 @@ void receiveCommandFromBTSerial() {
   } else if (cmd.type == COMMAND_AIR_PUMP) {
     mySerial.print(" -> Air pump ");
     mySerial.println(cmd.payload.is ? "ON" : "OFF");
+    analogWrite(PIN_AIR_PUMP_PWM, 200); // force push air for prevent to stop motor
+    delay(500); // wait for motor rolling
     analogWrite(PIN_AIR_PUMP_PWM, cmd.payload.is ? AIR_PUMP_PWM_POWER : 0);
   } else if (cmd.type == COMMAND_MEASURE_EC) {
     // Wait few seconds prevent breaking sensors
