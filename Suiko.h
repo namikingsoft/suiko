@@ -5,9 +5,9 @@
 
 #define SERIAL_BPS 9600
 #define PIN_EC_INPUT A0
-#define PIN_EC_GROUND A1
 #define PIN_EC_POWER A4
 #define PIN_PH_INPUT A7
+#define PIN_EC_GROUND A1
 #define PIN_CYCLE_WATER 2
 #define PIN_INPUT_WATER 3
 #define PIN_AIR_PUMP_PWM 5
@@ -18,15 +18,6 @@
 #define BLOCK_MEASURE_EC_DURING_MILLIS 5000
 #define BLOCK_OBSERVE_EC_DURING_MILLIS 60000
 #define AIR_PUMP_PWM_POWER 110
-
-struct MeasureResult {
-  float ec;
-  float ph;
-  float temperature;
-};
-
-MeasureResult measure();
-void printMeasureResult(MeasureResult* const result);
 
 void setup();
 void loop();

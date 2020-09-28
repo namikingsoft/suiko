@@ -45,16 +45,10 @@ void setup() {
   mySerial.println("Connected");
 }
 
-MeasureResult measure() {
-  ECResult const result = ecMeter.measure();
-  float const ph = phMeter.measure();
-  return { result.ec25, ph, result.temperature };
-}
-
-void printMeasureResult(MeasureResult* const result) {
-  mySerial.print(result->ec);
+void printMeasureResult(ECResult* const result, float const ph) {
+  mySerial.print(result->ec25);
   mySerial.print("EC ");
-  mySerial.print(result->ph);
+  mySerial.print(ph);
   mySerial.print("pH ");
   mySerial.print(result->temperature);
   mySerial.println("*C");
@@ -95,9 +89,10 @@ void receiveCommandFromBTSerial() {
       mySerial.println(" -> Turn off observe mode");
       return;
     }
-    MeasureResult const result = measure();
+    ECResult const result = ecMeter.measure();
+    float const ph = phMeter.measure();
     mySerial.print(" -> ");
-    printMeasureResult(&result);
+    printMeasureResult(&result, ph);
   } else if (cmd.type == COMMAND_OBSERVE_MODE_OFF) {
     mySerial.println(" -> Observe mode: OFF");
     observeCommand = cmd;
@@ -122,14 +117,15 @@ void observeForInputWater() {
 
   // set to default
   blockObserveEC.setDuringMillis(BLOCK_OBSERVE_EC_DURING_MILLIS);
-
-  MeasureResult const result = measure();
+  
+  ECResult const result = ecMeter.measure();
+  float const ph = phMeter.measure();
   mySerial.print("---> ");
-  printMeasureResult(&result);
+  printMeasureResult(&result, ph);
 
   if (
-    (observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE && result.ec > observeCommand.payload.ec) ||
-    (observeCommand.type == COMMAND_OBSERVE_MODE_BELOW && result.ec < observeCommand.payload.ec)
+    (observeCommand.type == COMMAND_OBSERVE_MODE_ABOVE && result.ec25 > observeCommand.payload.ec) ||
+    (observeCommand.type == COMMAND_OBSERVE_MODE_BELOW && result.ec25 < observeCommand.payload.ec)
   ) {
     // speed up observation
     blockObserveEC.setDuringMillis(BLOCK_MEASURE_EC_DURING_MILLIS);
