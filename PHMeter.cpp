@@ -1,8 +1,8 @@
 #include "PHMeter.h"
 #include "Arduino.h"
 
-#define V2PH_SLOPE -5.278
-#define V2PH_INTERCEPT 21.709
+#define V2PH_SLOPE -5.81261548798925
+#define V2PH_INTERCEPT 21.9317612968251
 #define BUFFUR_LENGTH 10
 
 PHMeter::PHMeter(int const pinAnalogIn) {
