@@ -42,7 +42,7 @@ void setup() {
   analogWrite(PIN_AIR_PUMP_PWM, 0);
   
   mySerial.begin(SERIAL_BPS);
-  mySerial.println("Conneted");
+  mySerial.println("Connected");
 }
 
 MeasureResult measure() {
