@@ -8,7 +8,6 @@ PHMeter::PHMeter(int const pinAnalogIn) {
 }
  
 float PHMeter::measure() {
-  int sensorValue = 0;
   int buf[BUFFER_LENGTH], temp;
 
   for (int i=0; i<BUFFER_LENGTH; i++) {
@@ -27,7 +26,7 @@ float PHMeter::measure() {
     }
   }
 
-  unsigned long int avgValue = 0;
+  unsigned long avgValue = 0;
   for (int i=2; i<BUFFER_LENGTH-2; i++) avgValue += buf[i];
   
   float vol = (float)avgValue * 5.0 / 1024 / (BUFFER_LENGTH-4);
